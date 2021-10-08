@@ -35,7 +35,7 @@ const Gallery: React.FunctionComponent<IGalleryProps> = (props) => {
                   <Card
                     key={index}
                     style={{ marginTop: 10 }}
-                    cover={<img src={'./asset/' + pic} />}
+                    cover={<img src={'./asset/gallery/' + pic} />}
                     onClick={() => {
                       handleClick('./asset/gallery/' + pic);
                     }}
