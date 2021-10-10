@@ -4,15 +4,16 @@ import './style.less';
 import SFaxios from '@/utils/SFaxios';
 // 引入子组件集
 import { RoleCreate } from './components';
+import { TableRowSelection } from '_antd@3.26.20@antd/lib/table';
 interface IPermissionProps {}
 
 const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
   // 表格数据
   const [data, setData] = useState([]);
   // 选定行编号
-  const [tableKay, setTableKay] = useState([]);
+  const [tableKay, setTableKay] = useState<number[] | string[]>();
   // 选定行内容
-  const [tableRow, setTableRow] = useState([]);
+  const [tableRow, setTableRow] = useState<any>([]);
   // 模态框是否弹出
   const [visible, setVisible] = useState(false);
   // 标题显示
@@ -23,6 +24,9 @@ const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
   // 请求数据
   useEffect(() => {
     SFaxios.ajax({ url: '/role/list' }).then((res: any) => {
+      res.result.item_list.forEach((item: any, index: number) => {
+        item.key = index;
+      });
       setData(res.result.item_list);
     });
   }, []);
@@ -59,6 +63,15 @@ const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
       dataIndex: 'authorize_user_name',
     },
   ];
+  // 单选按钮配置
+  const rowSelection: TableRowSelection<{}> = {
+    type: 'radio',
+    selectedRowKeys: tableKay,
+    onChange: (selectKey, selectRow) => {
+      setTableRow(selectRow);
+      setTableKay(selectKey);
+    },
+  };
   return (
     <div className="permission">
       <Card style={{ marginBottom: 10 }}>
@@ -100,6 +113,15 @@ const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
           // pagination={false}
           columns={columns}
           dataSource={data}
+          rowSelection={rowSelection}
+          onRow={(record, index) => {
+            return {
+              onClick: () => {
+                setTableKay([index]);
+                setTableRow(record);
+              },
+            };
+          }}
         />
       </Card>
       <Modal
@@ -109,7 +131,7 @@ const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
           setVisible(false);
         }}
       >
-        {type == 'create' ? <RoleCreate /> : ''}
+        {type == 'create' ? <RoleCreate getForm={() => {}} /> : ''}
       </Modal>
     </div>
   );
