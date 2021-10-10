@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Table, Pagination } from 'antd';
+import { Button, Card, Table, Pagination, Modal } from 'antd';
 import './style.less';
 import SFaxios from '@/utils/SFaxios';
+// 引入子组件集
+import { RoleCreate } from './components';
 interface IPermissionProps {}
 
 const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
@@ -11,11 +13,21 @@ const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
   const [tableKay, setTableKay] = useState([]);
   // 选定行内容
   const [tableRow, setTableRow] = useState([]);
+  // 模态框是否弹出
+  const [visible, setVisible] = useState(false);
+  // 标题显示
+  const [title, setTitle] = useState('');
+  const [type, setTupe] = useState<
+    'create' | undefined | 'setting' | 'editUser'
+  >();
+  // 请求数据
   useEffect(() => {
     SFaxios.ajax({ url: '/role/list' }).then((res: any) => {
       setData(res.result.item_list);
     });
   }, []);
+  // 表单逻辑提交
+
   const columns = [
     {
       title: '角色ID',
@@ -51,9 +63,36 @@ const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
     <div className="permission">
       <Card style={{ marginBottom: 10 }}>
         <div className="myContent">
-          <Button type="primary">创建角色</Button>
-          <Button type="primary">设置权限</Button>
-          <Button type="primary">用户权限</Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setTitle('创建角色');
+              setVisible(true);
+              setTupe('create');
+            }}
+          >
+            创建角色
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setTitle('设置权限');
+              setVisible(true);
+              setTupe('editUser');
+            }}
+          >
+            设置权限
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => {
+              setTitle('用户权限');
+              setVisible(true);
+              setTupe('setting');
+            }}
+          >
+            用户权限
+          </Button>
         </div>
       </Card>
       <Card>
@@ -63,6 +102,15 @@ const Permission: React.FunctionComponent<IPermissionProps> = (props) => {
           dataSource={data}
         />
       </Card>
+      <Modal
+        title={title}
+        visible={visible}
+        onCancel={() => {
+          setVisible(false);
+        }}
+      >
+        {type == 'create' ? <RoleCreate /> : ''}
+      </Modal>
     </div>
   );
 };

@@ -28,7 +28,7 @@ const _layout: React.FunctionComponent<I_layoutProps> = (props) => {
           {props.children}
         </Content>
         <Footer style={{ textAlign: 'center', color: '#ccc' }}>
-          建议使用Chrome浏览器打开，拥有更好的体验 &copy; MengFanLiang All Right
+          建议使用Chrome浏览器打开，拥有更好的体验 &copy; ZhouZaoNning All Right
           Remain.
         </Footer>
       </Content>
